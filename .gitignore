@@ -1,0 +1,36 @@
+# Dependências
+node_modules/
+
+# Arquivos compilados
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Cobertura de testes
+coverage/
+
+# Cache
+.cache/
+.tmp/
+temp/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# VS Code (opcional)
+.vscode/
+
+# TypeScript
+*.tsbuildinfo
+
+anotações.txt

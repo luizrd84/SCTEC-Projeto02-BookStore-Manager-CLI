@@ -1,0 +1,5 @@
+PGHOST=localhost
+PGPORT=5432
+PGUSER=seu_usuario
+PGPASSWORD=sua_senha
+PGDATABASE=sctec_bookstore
