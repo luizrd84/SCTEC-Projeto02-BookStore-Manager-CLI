@@ -6,9 +6,12 @@
   "author": "",
   "type": "commonjs",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "schema": "tsx src/database/createSchema.ts"
+  "scripts": {    
+    "schema": "tsx src/database/createSchema.ts",
+
+    "dev": "tsx src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
