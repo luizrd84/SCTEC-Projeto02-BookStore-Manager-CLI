@@ -80,28 +80,6 @@ export class AutorRepository {
         await pool.query(sql, [id]);
     }
 
-
-    /*
-    //Isso vai buscar apenas um resultado... tem que mudar depois
-    async buscarPorNome(nome: string): Promise<Autor | null> {
-
-        const sql = `
-            SELECT *
-            FROM tb_autor
-            WHERE LOWER(nome) = LOWER($1)
-        `;
-
-        const result = await pool.query<Autor>(sql, [nome]);
-
-        const resultadoBusca = result.rows[0];
-
-        if (!resultadoBusca) {
-            return null;
-        }
-
-        return resultadoBusca;
-    }*/
-
     async buscarPorNome(nome: string): Promise<Autor[]> {
 
         const sql = `

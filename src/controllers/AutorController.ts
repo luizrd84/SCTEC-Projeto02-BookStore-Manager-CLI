@@ -260,7 +260,7 @@ class AutorController {
             let dataNascTexto;   
             let data_nasc;     
             while (dataNascValida !== true) {
-                console.log(`Data de Nascimento atual: ${autorBusca.data_nasc}`);
+                console.log(`Data de Nascimento atual: ${autorBusca.data_nasc.toLocaleDateString("pt-BR")}`);
                 dataNascTexto = await rl.question("Digite a nova data de nascimento (DD/MM/AAAA): ");
                 
                 const regex = /^\d{2}\/\d{2}\/\d{4}$/;
