@@ -187,42 +187,42 @@ INSERT INTO
 VALUES (
         'João Silva',
         'joao@email.com',
-        '47999990001'
+        '(47) 99999-0001'
     ),
     (
         'Maria Souza',
         'maria@email.com',
-        '47999990002'
+        '(47) 99999-0002'
     ),
     (
         'Carlos Oliveira',
         'carlos@email.com',
-        '47999990003'
+        '(47) 99999-0003'
     ),
     (
         'Ana Pereira',
         'ana@email.com',
-        '47999990004'
+        '(47) 99999-0004'
     ),
     (
         'Pedro Santos',
         'pedro@email.com',
-        '47999990005'
+        '(47) 99999-0005'
     ),
     (
         'Fernanda Lima',
         'fernanda@email.com',
-        '47999990006'
+        '(47) 99999-0006'
     ),
     (
         'Lucas Costa',
         'lucas@email.com',
-        '47999990007'
+        '(47) 99999-0007'
     ),
     (
         'Juliana Rocha',
         'juliana@email.com',
-        '47999990008'
+        '(47) 99999-0008'
     );
 
 -- EMPRÉSTIMOS

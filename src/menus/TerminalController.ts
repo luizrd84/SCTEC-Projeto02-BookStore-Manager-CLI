@@ -1,5 +1,6 @@
 import AutorController from "../controllers/AutorController";
 import LivroController from "../controllers/LivroController";
+import ClienteController from "../controllers/ClienteController";
 import { rl } from "../utils/ConsoleUtils";
 
 class TerminalController { 
@@ -7,7 +8,8 @@ class TerminalController {
 
     constructor(
         private autorController: AutorController,
-        private livroController: LivroController
+        private livroController: LivroController,
+        private clienteController: ClienteController
     ) {
         //constructor
     }      
@@ -38,6 +40,9 @@ class TerminalController {
                     break;
                 case "2":
                     await this.livroController.inicializarMenuLivro();
+                    break;
+                case "3": 
+                    await this.clienteController.inicializarMenuCliente();
                     break;
                 case "5":
                     rl.close();
