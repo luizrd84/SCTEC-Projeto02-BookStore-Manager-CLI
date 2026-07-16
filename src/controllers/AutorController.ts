@@ -131,8 +131,7 @@ class AutorController {
 
         console.log("Autores cadastrados:");
         autores.forEach((autor) => {
-            console.log(`ID: ${autor.id}, Nome: ${autor.nome}, Nacionalidade: ${autor.nacionalidade}, Data Nasc.: ${autor.data_nasc.toLocaleDateString("pt-BR")}
-            ----------------------------`);
+            console.log(`ID: ${autor.id}, Nome: ${autor.nome}, Nacionalidade: ${autor.nacionalidade}, Data Nasc.: ${autor.data_nasc.toLocaleDateString("pt-BR")}`);
         });
 
         await aguardarEnter();

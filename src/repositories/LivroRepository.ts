@@ -1,5 +1,6 @@
 import { Livro } from "../models/Livro";
 import { pool } from "../database/connection";
+import { LivroDisponivelDTO } from "../models/DTOs/LivroDisponivelDTO";
 
 export class LivroRepository {
 
@@ -95,9 +96,79 @@ export class LivroRepository {
         return result.rows;
     }
 
-    // Buscar por autor?
+    
+    async livrosDisponiveisParaEmprestimo(): Promise<LivroDisponivelDTO[]> {
 
-    // Quantidade???
+        const sql = `
+            SELECT
+                l.id,
+                l.titulo,
+                a.nome AS autor,
+                l.ano_publicacao,
+                l.quantidade,
+                (l.quantidade - COUNT(e.id)) AS disponiveis
+            FROM tb_livro l
+            LEFT JOIN tb_emprestimo_livro el
+                ON l.id = el.livro_id
+            LEFT JOIN tb_emprestimo e
+                ON el.emprestimo_id = e.id
+                AND e.data_devolucao IS NULL
+            JOIN tb_autor a
+                ON l.autor_id = a.id
+            GROUP BY
+                l.id,
+                l.titulo,
+                a.nome,
+                l.ano_publicacao,
+                l.quantidade
+            HAVING
+                (l.quantidade - COUNT(e.id)) > 0
+            ORDER BY
+                l.titulo;
+        `;
+
+        const result = await pool.query<LivroDisponivelDTO>(sql);
+
+        return result.rows;
+    }
+
+    async buscarDisponibilidadePorId(id: number): Promise<LivroDisponivelDTO | null> {
+
+        const sql = `
+            SELECT
+                l.id,
+                l.titulo,
+                a.nome AS autor,
+                l.ano_publicacao,
+                l.quantidade,
+                (l.quantidade - COUNT(e.id)) AS disponiveis
+            FROM tb_livro l
+            LEFT JOIN tb_emprestimo_livro el
+                ON l.id = el.livro_id
+            LEFT JOIN tb_emprestimo e
+                ON el.emprestimo_id = e.id
+                AND e.data_devolucao IS NULL
+            JOIN tb_autor a
+                ON l.autor_id = a.id
+            WHERE l.id = $1
+            GROUP BY
+                l.id,
+                l.titulo,
+                a.nome,
+                l.ano_publicacao,
+                l.quantidade;
+        `;
+
+        const result = await pool.query<LivroDisponivelDTO>(sql, [id]);
+
+        const livro = result.rows[0];
+
+        if (!livro) {
+            return null;
+        }
+
+        return livro;
+    }
 
 }
 

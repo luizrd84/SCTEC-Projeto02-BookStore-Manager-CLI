@@ -9,6 +9,9 @@ import { LivroRepository } from './repositories/LivroRepository';
 import ClienteController from './controllers/ClienteController';
 import ClienteService from './services/ClienteService';
 import { ClienteRepository } from './repositories/ClienteRepository';
+import EmprestimoController from './controllers/EmprestimoController';
+import EmprestimoService from './services/EmprestimoService';
+import { EmprestimoRepository } from './repositories/EmprestimoRepository';
 
 
 async function main() {    
@@ -25,8 +28,12 @@ async function main() {
     const clienteService = new ClienteService(clienteRepository);
     const clienteController = new ClienteController(clienteService);
 
+    const emprestimoRepository = new EmprestimoRepository();
+    const emprestimoService = new EmprestimoService(emprestimoRepository);
+    const emprestimoController = new EmprestimoController(emprestimoService, clienteService, livroService);
+
     const terminal = new TerminalController(
-        autorController, livroController, clienteController
+        autorController, livroController, clienteController, emprestimoController
     );
     await terminal.inicializarConsole();
   

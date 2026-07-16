@@ -154,8 +154,7 @@ class ClienteController {
 
         console.log("Clientes cadastrados:");
         clientes.forEach((cliente) => {
-            console.log(`ID: ${cliente.id}, Nome: ${cliente.nome}, E-mail: ${cliente.email}, Telefone: ${cliente.telefone}, Criado em: ${cliente.criado_em.toLocaleDateString("pt-BR")}
-            ----------------------------`);
+            console.log(`ID: ${cliente.id}, Nome: ${cliente.nome}, E-mail: ${cliente.email}, Telefone: ${cliente.telefone}, Criado em: ${cliente.criado_em.toLocaleDateString("pt-BR")}`);
         });
 
         await aguardarEnter();

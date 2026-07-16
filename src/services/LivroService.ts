@@ -51,6 +51,16 @@ class LivroService {
         await this.livroRepository.excluir(id);
     }
 
+ 
+    async livrosDisponiveisParaEmprestimo() {
+        return await this.livroRepository.livrosDisponiveisParaEmprestimo();
+    }
+
+    async buscarDisponibilidadePorId(id: number) {
+        return await this.livroRepository.buscarDisponibilidadePorId(id);
+    }
+
+
 }
 
 export default LivroService;
