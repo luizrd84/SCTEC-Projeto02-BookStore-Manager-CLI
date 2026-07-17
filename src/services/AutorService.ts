@@ -9,13 +9,21 @@ class AutorService {
         //constructor
     }   
 
-    async cadastrar(autor: Autor) {
+    async cadastrar(autor: Autor): Promise<Autor | null> {
+        
+        if(autor.data_nasc === null || autor.nome === null || autor.nacionalidade === null) {
+            console.log("Dados inválidos.");
+            return null;
+        }
 
-        //Validações. 
-        // - Ver se não tem já no banco, etc
+        const autorExistente = await this.autorRepository.verificaSeNomeJaExiste(autor.nome);
+
+        if(autorExistente) {
+            console.log("Já existe um autor com esse nome.");
+            return null;
+        }
 
         return await this.autorRepository.cadastrar(autor);
-
     }
 
     async listar() {
@@ -23,25 +31,22 @@ class AutorService {
     }
 
     async buscarPorNome(nome: string) {
-
         const autor = await this.autorRepository.buscarPorNome(nome);
 
         return autor;
     }
 
     async buscarPorId(id: number) {
-
         const autor = await this.autorRepository.buscarPorId(id);
 
         if (!autor) {
-            throw new Error("Autor não encontrado.");
+            return null;
         }
 
         return autor;
     }
 
     async alterar(autor: Autor) {
-
         await this.buscarPorId(autor.id!);
 
         return await this.autorRepository.alterar(autor);

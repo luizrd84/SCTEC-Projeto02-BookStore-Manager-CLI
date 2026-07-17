@@ -10,9 +10,7 @@ class ClienteService {
     }   
 
     async cadastrar(cliente: Cliente) {
-        //Validações. 
-        // - Ver se não tem já no banco, etc
-
+        //Validações - Ver se não tem já no banco, etc
         return await this.clienteRepository.cadastrar(cliente);
     }
 
@@ -21,25 +19,23 @@ class ClienteService {
     }
 
     async buscarPorNome(nome: string) {
-
         const cliente = await this.clienteRepository.buscarPorNome(nome);
 
         return cliente;
     }
 
     async buscarPorId(id: number) {
-
         const cliente = await this.clienteRepository.buscarPorId(id);
 
         if (!cliente) {
-            throw new Error("Cliente não encontrado.");
+            //throw new Error("Cliente não encontrado.");
+            return null;
         }
 
         return cliente;
     }
 
     async alterar(cliente: Cliente) {
-
         await this.buscarPorId(cliente.id!);
 
         return await this.clienteRepository.alterar(cliente);
@@ -50,7 +46,6 @@ class ClienteService {
 
         await this.clienteRepository.excluir(id);
     }
-
 }
 
 export default ClienteService;

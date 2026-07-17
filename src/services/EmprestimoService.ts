@@ -11,9 +11,7 @@ class EmprestimoService {
     }   
 
     async cadastrar(emprestimo: Emprestimo) {
-        //Validações. 
-        // - Ver se não tem já no banco, etc
-
+        //Validações - Ver se não tem já no banco, etc
         return await this.emprestimoRepository.cadastrar(emprestimo);
     }
    
@@ -22,7 +20,6 @@ class EmprestimoService {
     }
 
     async devolver (emprestimo: Emprestimo) {
-
         await this.buscarPorId(emprestimo.id!);
 
         return await this.emprestimoRepository.devolver(emprestimo);
@@ -46,12 +43,19 @@ class EmprestimoService {
     
     async listarEmAberto()  {
         return await this.emprestimoRepository.listarEmAberto();
-    }    
+    }   
+
+    async listarClientesComEmprestimosEmAberto()  {
+        return await this.emprestimoRepository.listarClientesComEmprestimosEmAberto();
+    }   
+    
+    async listarEmprestimosFinalizados()  {
+        return await this.emprestimoRepository.listarEmprestimosFinalizados();
+    }  
 
     async listarAtrasados() {
         return await this.emprestimoRepository.listarAtrasados();
     }   
-
 
 }
 

@@ -235,6 +235,76 @@ export class EmprestimoRepository {
     }
 
 
+    async listarClientesComEmprestimosEmAberto(): Promise<EmprestimoDetalhadoDTO[]> {
+
+        const sql = `
+            SELECT
+                e.id,
+                c.nome AS cliente,
+                e.data_emprestimo,
+                e.data_prevista_devolucao,
+                e.data_devolucao,
+                ARRAY_AGG(l.titulo ORDER BY l.titulo) AS livros
+            FROM tb_emprestimo e
+            JOIN tb_cliente c
+                ON e.cliente_id = c.id
+            JOIN tb_emprestimo_livro el
+                ON e.id = el.emprestimo_id
+            JOIN tb_livro l
+                ON el.livro_id = l.id
+            WHERE e.data_devolucao IS NULL
+            GROUP BY
+                e.id,
+                c.nome,
+                e.data_emprestimo,
+                e.data_prevista_devolucao,
+                e.data_devolucao
+            ORDER BY
+                c.nome;
+        `;
+
+        const result = await pool.query<EmprestimoDetalhadoDTO>(sql);
+
+        return result.rows;
+    }
+
+
+
+
+    async listarEmprestimosFinalizados(): Promise<EmprestimoDetalhadoDTO[]> {
+
+        const sql = `
+            SELECT
+                e.id,
+                c.nome AS cliente,
+                e.data_emprestimo,
+                e.data_prevista_devolucao,
+                e.data_devolucao,
+                ARRAY_AGG(l.titulo ORDER BY l.titulo) AS livros
+            FROM tb_emprestimo e
+            JOIN tb_cliente c
+                ON e.cliente_id = c.id
+            JOIN tb_emprestimo_livro el
+                ON e.id = el.emprestimo_id
+            JOIN tb_livro l
+                ON el.livro_id = l.id
+            WHERE e.data_devolucao IS NOT NULL
+            GROUP BY
+                e.id,
+                c.nome,
+                e.data_emprestimo,
+                e.data_prevista_devolucao,
+                e.data_devolucao
+            ORDER BY
+                e.data_prevista_devolucao;
+        `;
+
+        const result = await pool.query<EmprestimoDetalhadoDTO>(sql);
+
+        return result.rows;
+    }
+
+
     async listarAtrasados(): Promise<EmprestimoDetalhadoDTO[]> {
 
         const sql = `

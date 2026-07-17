@@ -132,6 +132,41 @@ export class LivroRepository {
         return result.rows;
     }
 
+    async listarPorAutorId(autorId: number): Promise<LivroDisponivelDTO[]> {
+
+        const sql = `
+            SELECT
+                l.id,
+                l.titulo,
+                a.nome AS autor,
+                l.ano_publicacao,
+                l.quantidade,
+                (l.quantidade - COUNT(e.id)) AS disponiveis
+            FROM tb_livro l
+            LEFT JOIN tb_emprestimo_livro el
+                ON l.id = el.livro_id
+            LEFT JOIN tb_emprestimo e
+                ON el.emprestimo_id = e.id
+                AND e.data_devolucao IS NULL
+            INNER JOIN tb_autor a
+                ON l.autor_id = a.id
+            WHERE
+                l.autor_id = $1
+            GROUP BY
+                l.id,
+                l.titulo,
+                a.nome,
+                l.ano_publicacao,
+                l.quantidade
+            ORDER BY
+                l.titulo;
+        `;
+
+        const result = await pool.query<LivroDisponivelDTO>(sql, [autorId]);
+
+        return result.rows;
+    }
+    
     async buscarDisponibilidadePorId(id: number): Promise<LivroDisponivelDTO | null> {
 
         const sql = `

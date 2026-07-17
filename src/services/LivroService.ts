@@ -10,9 +10,7 @@ class LivroService {
     }   
 
     async cadastrar(livro: Livro) {
-        //Validações. 
-        // - Ver se não tem já no banco, etc
-
+        //Validações - Ver se não tem já no banco, etc
         return await this.livroRepository.cadastrar(livro);
     }
 
@@ -21,14 +19,12 @@ class LivroService {
     }
 
     async buscarPorTitulo(titulo: string) {
-
         const livro = await this.livroRepository.buscarPorTitulo(titulo);
 
         return livro;
     }
 
     async buscarPorId(id: number) {
-
         const livro = await this.livroRepository.buscarPorId(id);
 
         if (!livro) {
@@ -39,7 +35,6 @@ class LivroService {
     }
 
     async alterar(livro: Livro) {
-
         await this.buscarPorId(livro.id!);
 
         return await this.livroRepository.alterar(livro);
@@ -56,10 +51,15 @@ class LivroService {
         return await this.livroRepository.livrosDisponiveisParaEmprestimo();
     }
 
+    async listarPorAutorId(id: number) {
+        return await this.livroRepository.listarPorAutorId(id);
+    }
+
+    
+
     async buscarDisponibilidadePorId(id: number) {
         return await this.livroRepository.buscarDisponibilidadePorId(id);
     }
-
 
 }
 

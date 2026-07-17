@@ -24,11 +24,12 @@ class LivroController {
             2 - Alterar Livro
             3 - Deletar Livro
             4 - Listar Livros
-            5 - Buscar Livro
-            6 - Livros disponíveis para empréstimo
-            7 - Consulta disponibilidade por ID 
-            8 - Voltar
+            5 - Buscar Livro            
+            6 - Voltar
             Escolha: `);
+
+            //6 - Livros disponíveis para empréstimo
+            //7 - Consulta disponibilidade por ID 
 
             switch(opcao){
                 case "1": 
@@ -46,13 +47,13 @@ class LivroController {
                 case "5":
                     await this.buscar();
                     break;
-                case "6": 
-                    await this.livrosDisponiveisParaEmprestimo();
-                    break;
-                case "7":
-                    await this.buscarDisponibilidadePorId();
-                    break;
-                case "8":
+                // case "6": 
+                //     await this.livrosDisponiveisParaEmprestimo();
+                //     break;
+                // case "7":
+                //     await this.buscarDisponibilidadePorId();
+                //     break;
+                case "6":
                     return;
                 default: 
                     console.log("Opção inválida, escolha uma das opções.");   
@@ -366,15 +367,41 @@ class LivroController {
     }
     
 
+    async listarLivrosPorAutorId() {
+
+        const idTexto = await rl.question("Digite o ID do autor: ");
+
+        const id = Number(idTexto);
+
+        if (isNaN(id)) {
+            console.log("ID inválido.");
+            return;
+        }
+
+        try {
+            const livros = await this.livroService.listarPorAutorId(id);
+
+            livros.forEach((livro) => {                
+                console.log(`Autor: ${livro.autor}, Título: ${livro.titulo}, Ano publicação: ${livro.ano_publicacao}, Quantidade disponível: ${livro.disponiveis} de ${livro.quantidade}`);                              
+            });
+
+
+        } catch (error) {
+            console.log(error instanceof Error ? error.message : "Erro desconhecido.");            
+        }
+
+        await aguardarEnter();
+    }
+
 
     
 
-    private async livrosDisponiveisParaEmprestimo() {
+    async livrosDisponiveisParaEmprestimo() {
         try {
             const livros = await this.livroService.livrosDisponiveisParaEmprestimo();
 
             livros.forEach((livro) => {                
-                console.log(`ID: ${livro.id}, Título: ${livro.titulo}, Autor: ${livro.autor}, Ano publicação: ${livro.ano_publicacao}, Quantidade disponível: ${livro.disponiveis} de ${livro.quantidade}`);                              
+                console.log(`Título: ${livro.titulo}, Autor: ${livro.autor}, Ano publicação: ${livro.ano_publicacao}, Quantidade disponível: ${livro.disponiveis} de ${livro.quantidade}`);                              
             });
 
 
@@ -402,7 +429,7 @@ class LivroController {
             if(livro === null ) {
                 console.log("Livro não encontrado.");
             } else {
-                console.log(`ID: ${livro.id}, Título: ${livro.titulo}, Autor: ${livro.autor}, Ano publicação: ${livro.ano_publicacao}, Quantidade disponível: ${livro.disponiveis} de ${livro.quantidade}`);                              
+                console.log(`Título: ${livro.titulo}, Autor: ${livro.autor}, Ano publicação: ${livro.ano_publicacao}, Quantidade disponível: ${livro.disponiveis} de ${livro.quantidade}`);                              
             }           
             
         } catch (error) {

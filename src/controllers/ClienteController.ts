@@ -192,9 +192,14 @@ class ClienteController {
             try {
                 const busca = await this.clienteService.buscarPorId(id);
 
-                console.clear();
-                console.log("Dados do cliete pesquisado:");
-                console.log(`ID: ${busca.id}, Nome: ${busca.nome}, E-mail: ${busca.email}, Telefone: ${busca.telefone}, Criado em: ${busca.criado_em.toLocaleDateString("pt-BR")}`);          
+                if(busca === null) {
+                    console.log("Cliente não encontrado.");
+
+                } else {
+                    console.clear();
+                    console.log("Dados do cliete pesquisado:");
+                    console.log(`ID: ${busca.id}, Nome: ${busca.nome}, E-mail: ${busca.email}, Telefone: ${busca.telefone}, Criado em: ${busca.criado_em.toLocaleDateString("pt-BR")}`);          
+                }                
 
             } catch (error) {
                 console.log(error instanceof Error ? error.message : "Erro desconhecido.");
@@ -254,57 +259,62 @@ class ClienteController {
         try {
             const clienteBusca = await this.clienteService.buscarPorId(id);
 
+            if(clienteBusca === null) {
+                console.log("Cliente não encontrado.");
+            } else {
+                
+                let nomeValido = false;
+                let nomeTexto;        
+                while (nomeValido !== true) {
+                    console.log(`Nome atual: ${clienteBusca.nome}`);
+                    nomeTexto = await rl.question("Digite o nome do cliente: ");
+                    if(nomeTexto.length > 4) {
+                        nomeValido = true;
+                    } else {
+                        console.log("Nome inválido, digite novamente.");
+                    }            
+                }
 
-            let nomeValido = false;
-            let nomeTexto;        
-            while (nomeValido !== true) {
-                console.log(`Nome atual: ${clienteBusca.nome}`);
-                nomeTexto = await rl.question("Digite o nome do cliente: ");
-                if(nomeTexto.length > 4) {
-                    nomeValido = true;
-                } else {
-                    console.log("Nome inválido, digite novamente.");
-                }            
-            }
+                let emailValido = false;
+                let emailTexto;        
+                while (emailValido !== true) {
+                    console.log(`E-mail atual: ${clienteBusca.email}`);
+                    emailTexto = await rl.question("Digite o email do cliente: ");
+                    if(this.verificaEmailValido(emailTexto)) {
+                        emailValido = true;
+                    } else {
+                        console.log("E-mail inválido, digite novamente.");
+                    }            
+                }
 
-            let emailValido = false;
-            let emailTexto;        
-            while (emailValido !== true) {
-                console.log(`E-mail atual: ${clienteBusca.email}`);
-                emailTexto = await rl.question("Digite o email do cliente: ");
-                if(this.verificaEmailValido(emailTexto)) {
-                    emailValido = true;
-                } else {
-                    console.log("E-mail inválido, digite novamente.");
-                }            
-            }
+                let telefoneValido = false;
+                let telefoneTexto;        
+                while (telefoneValido !== true) {
+                    console.log(`Telefone atual: ${clienteBusca.telefone}`);
+                    telefoneTexto = await rl.question("Digite o telefone do cliente com o DDD (apenas números): ");
+                    if(this.verificaTelefoneValido(telefoneTexto)) {
+                        telefoneValido = true;
+                    } else {
+                        console.log("Telefone inválido, digite novamente.");
+                    }            
+                }
+        
+                const clienteAtualizado: Cliente = {  
+                    id: clienteBusca.id!,
+                    nome: nomeTexto!,
+                    email: emailTexto!,
+                    telefone: this.formatarTelefone(telefoneTexto!),
+                    criado_em: clienteBusca.criado_em
+                };
 
-            let telefoneValido = false;
-            let telefoneTexto;        
-            while (telefoneValido !== true) {
-                console.log(`Telefone atual: ${clienteBusca.telefone}`);
-                telefoneTexto = await rl.question("Digite o telefone do cliente com o DDD (apenas números): ");
-                if(this.verificaTelefoneValido(telefoneTexto)) {
-                    telefoneValido = true;
-                } else {
-                    console.log("Telefone inválido, digite novamente.");
-                }            
-            }
-    
-            const clienteAtualizado: Cliente = {  
-                id: clienteBusca.id!,
-                nome: nomeTexto!,
-                email: emailTexto!,
-                telefone: this.formatarTelefone(telefoneTexto!),
-                criado_em: clienteBusca.criado_em
-            };
+                
+                try {
+                    await this.clienteService.alterar(clienteAtualizado);
+                    console.log("Cliente atualizado com sucesso!");
+                } catch (error) {
+                    console.log(error);            
+                }
 
-            
-            try {
-                await this.clienteService.alterar(clienteAtualizado);
-                console.log("Cliente atualizado com sucesso!");
-            } catch (error) {
-                console.log(error);            
             }
 
         } catch (error) {

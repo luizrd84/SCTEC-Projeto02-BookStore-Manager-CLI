@@ -28,12 +28,8 @@ class EmprestimoController {
             1 - Cadastrar Empréstimo
             2 - Devolver Empréstimo
             3 - Buscar Empréstimo por ID
-            4 - Listar Empréstimos            
-            5 - Listar Empréstimos por ID do Cliente
-            6 - Listar Empréstimos por ID do Livro
-            7 - Listar Empréstimos em aberto
-            8 - Listar Empréstimos atrasados
-            9 - Voltar
+            4 - Listar Empréstimos
+            5 - Voltar
             Escolha: `);
 
             switch(opcao){
@@ -48,20 +44,8 @@ class EmprestimoController {
                     break;
                 case "4":
                     await this.listar();
-                    break;                
+                    break;     
                 case "5":
-                    await this.listarPorCliente();
-                    break;
-                case "6":
-                    await this.listarPorLivro();
-                    break;
-                case "7": 
-                    await this.listarEmAberto();
-                    break;
-                case "8":
-                    await this.listarAtrasados();
-                    break;
-                case "9":
                     return;
                 default: 
                     console.log("Opção inválida, escolha uma das opções.");   
@@ -74,7 +58,7 @@ class EmprestimoController {
         let clienteIdValido = false;
         let clienteIdTexto = "0";        
         while (clienteIdValido !== true) {
-            clienteIdTexto = await rl.question("Digite o ID do autor: ");
+            clienteIdTexto = await rl.question("Digite o ID do Cliente: ");
             
             const clienteIdNumero = Number(clienteIdTexto);
 
@@ -84,8 +68,13 @@ class EmprestimoController {
             }
 
             try {
-                await this.clienteService.buscarPorId(clienteIdNumero);                
-                clienteIdValido = true;   
+                const cliente = await this.clienteService.buscarPorId(clienteIdNumero);                
+
+                if(cliente === null) {
+                    console.log("Cliente não encontrado");
+                } else {
+                    clienteIdValido = true;   
+                }                
             } catch (error) {
                 console.log(error);            
             }                        
@@ -313,7 +302,7 @@ class EmprestimoController {
             if(emprestimo) {                    
                 const listaLivros = emprestimo.livros.join(", ") + ".";
                 const devolucao = emprestimo.data_devolucao === null ? "-" : emprestimo.data_devolucao.toLocaleDateString("pt-BR");
-                console.log(`ID: ${emprestimo.id}, Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                console.log(`Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
                 console.log("Livros: " + listaLivros);
                 
             } else {
@@ -326,7 +315,7 @@ class EmprestimoController {
             
     }
 
-    private async listarPorCliente() { 
+    async listarPorCliente() { 
         
         const clienteIdTexto = await rl.question("Digite o ID do cliente para listar seus empréstimos: ");
         
@@ -344,7 +333,7 @@ class EmprestimoController {
                 emprestimos.forEach((emprestimo) => {
                     const listaLivros = emprestimo.livros.join(", ") + ".";
                     const devolucao = emprestimo.data_devolucao === null ? "-" : emprestimo.data_devolucao.toLocaleDateString("pt-BR");
-                    console.log(`ID: ${emprestimo.id}, Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                    console.log(`Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
                     console.log("Livros: " + listaLivros);
                 });                
                 
@@ -358,7 +347,7 @@ class EmprestimoController {
     }
 
 
-    private async listarPorLivro() { 
+    async listarPorLivro() { 
         
         const livroIdTexto = await rl.question("Digite o ID do livro para listar seus empréstimos: ");
         
@@ -376,7 +365,7 @@ class EmprestimoController {
                 emprestimos.forEach((emprestimo) => {
                     const listaLivros = emprestimo.livros.join(", ") + ".";
                     const devolucao = emprestimo.data_devolucao === null ? "-" : emprestimo.data_devolucao.toLocaleDateString("pt-BR");
-                    console.log(`ID: ${emprestimo.id}, Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                    console.log(`Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
                     console.log("Livros: " + listaLivros);
                 });                
                 
@@ -390,7 +379,7 @@ class EmprestimoController {
     }
 
 
-    private async listarEmAberto() { 
+    async listarEmAberto() { 
       
         try {
             const emprestimos = await this.emprestimoService.listarEmAberto();         
@@ -399,8 +388,56 @@ class EmprestimoController {
                 emprestimos.forEach((emprestimo) => {
                     const listaLivros = emprestimo.livros.join(", ") + ".";
                     const devolucao = emprestimo.data_devolucao === null ? "-" : emprestimo.data_devolucao.toLocaleDateString("pt-BR");
-                    console.log(`ID: ${emprestimo.id}, Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                    console.log("Livro: " + listaLivros);
+                    console.log(`Emprestado para: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                    
+                });                
+                
+            } else {
+                console.log("Nenhum resultado encontrado.");                       
+            }                       
+        } catch (error) {
+            console.log(error);                     
+        }   
+        await aguardarEnter();      
+    }
+
+    async listarClientesComEmprestimosEmAberto() { 
+      
+        try {
+            const emprestimos = await this.emprestimoService.listarClientesComEmprestimosEmAberto();         
+            
+            if(emprestimos.length > 0) {         
+                emprestimos.forEach((emprestimo) => {
+                    const listaLivros = emprestimo.livros.join(", ") + ".";                    
+                    console.log(`Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}`);
                     console.log("Livros: " + listaLivros);
+                });                
+                
+            } else {
+                console.log("Nenhum resultado encontrado.");                       
+            }                       
+        } catch (error) {
+            console.log(error);                     
+        }   
+        await aguardarEnter();      
+    }
+    
+
+
+    
+    async listarEmprestimosFinalizados() { 
+      
+        try {
+            const emprestimos = await this.emprestimoService.listarEmprestimosFinalizados();         
+            
+            if(emprestimos.length > 0) {         
+                emprestimos.forEach((emprestimo) => {
+                    const listaLivros = emprestimo.livros.join(", ") + ".";
+                    const devolucao = emprestimo.data_devolucao === null ? "-" : emprestimo.data_devolucao.toLocaleDateString("pt-BR");
+                    console.log("Livro: " + listaLivros);
+                    console.log(`Emprestado para: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                    
                 });                
                 
             } else {
@@ -413,16 +450,15 @@ class EmprestimoController {
     }
 
 
-    private async listarAtrasados() { 
+    async listarAtrasados() { 
       
         try {
             const emprestimos = await this.emprestimoService.listarAtrasados();         
             
             if(emprestimos.length > 0) {         
                 emprestimos.forEach((emprestimo) => {
-                    const listaLivros = emprestimo.livros.join(", ") + ".";
-                    const devolucao = emprestimo.data_devolucao === null ? "-" : emprestimo.data_devolucao.toLocaleDateString("pt-BR");
-                    console.log(`ID: ${emprestimo.id}, Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}, Data devolução: ${devolucao}`);
+                    const listaLivros = emprestimo.livros.join(", ") + ".";                    
+                    console.log(`Cliente: ${emprestimo.cliente}, Data empréstimo: ${emprestimo.data_emprestimo.toLocaleDateString("pt-BR")}, Data prevista devolução: ${emprestimo.data_prevista_devolucao.toLocaleDateString("pt-BR")}`);
                     console.log("Livros: " + listaLivros);
                 });                
                 

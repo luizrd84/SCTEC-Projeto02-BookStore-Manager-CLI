@@ -112,8 +112,10 @@ class AutorController {
         };
         
         try {
-            await this.autorService.cadastrar(autor);
-            console.log("Autor cadastrado com sucesso!");
+            const result = await this.autorService.cadastrar(autor);
+            if(result !== null) {
+                console.log("Autor cadastrado com sucesso!");
+            }            
         } catch (error) {
             console.log(error);            
         }
@@ -169,9 +171,13 @@ class AutorController {
             try {
                 const busca = await this.autorService.buscarPorId(id);
 
-                console.clear();
-                console.log("Dados do autor pesquisado:");
-                console.log(`ID: ${busca.id}, Nome: ${busca.nome}, Nacionalidade: ${busca.nacionalidade}, Data Nasc.: ${busca.data_nasc.toLocaleDateString("pt-BR")}`);          
+                if(busca === null)  {
+                    console.log("Autor não encontrado.")
+                } else {
+                    console.clear();
+                    console.log("Dados do autor pesquisado:");
+                    console.log(`ID: ${busca.id}, Nome: ${busca.nome}, Nacionalidade: ${busca.nacionalidade}, Data Nasc.: ${busca.data_nasc.toLocaleDateString("pt-BR")}`);          
+                }                
 
             } catch (error) {
                 console.log(error instanceof Error ? error.message : "Erro desconhecido.");
@@ -230,75 +236,79 @@ class AutorController {
         
         try {
             const autorBusca = await this.autorService.buscarPorId(id);
+
+            if(autorBusca === null) {
+                console.log("Autor não encontrado.");
+            } else {
+                let nomeValido = false;
+                let nomeTexto;        
+                while (nomeValido !== true) {
+                    console.log(`Nome atual: ${autorBusca.nome}`);
+                    nomeTexto = await rl.question("Digite o novo nome: ");
+                    if(nomeTexto.length > 4) {
+                        nomeValido = true;
+                    } else {
+                        console.log("Nome inválido, digite novamente.");
+                    }            
+                }
+
+                let nacionalidadeValida = false;
+                let nacionalidadeTexto;        
+                while (nacionalidadeValida !== true) {
+                    console.log(`Nacionalidade atual: ${autorBusca.nacionalidade}`);
+                    nacionalidadeTexto = await rl.question("Digite a nova nacionalidade: ");
+                    if(nacionalidadeTexto.length > 4) {
+                        nacionalidadeValida = true;
+                    } else {
+                        console.log("Nacionalidade inválida, digite novamente.");
+                    }            
+                }
+
+                let dataNascValida = false;
+                let dataNascTexto;   
+                let data_nasc;     
+                while (dataNascValida !== true) {
+                    console.log(`Data de Nascimento atual: ${autorBusca.data_nasc.toLocaleDateString("pt-BR")}`);
+                    dataNascTexto = await rl.question("Digite a nova data de nascimento (DD/MM/AAAA): ");
+                    
+                    const regex = /^\d{2}\/\d{2}\/\d{4}$/;
+
+                    if (!regex.test(dataNascTexto)) {
+                        console.log("Formato inválido. Use DD/MM/AAAA.");
+                        continue;
+                    }
+
+                    const [dia, mes, ano] = dataNascTexto.split("/").map(Number);
+
+                    data_nasc = new Date(ano!, mes! - 1, dia);
+
+                    if (
+                        data_nasc.getFullYear() !== ano ||
+                        data_nasc.getMonth() !== mes! - 1 ||
+                        data_nasc.getDate() !== dia
+                    ) {
+                        console.log("Data inválida.");
+                        continue;
+                    }
+
+                    dataNascValida = true;            
+                }                
         
-            let nomeValido = false;
-            let nomeTexto;        
-            while (nomeValido !== true) {
-                console.log(`Nome atual: ${autorBusca.nome}`);
-                nomeTexto = await rl.question("Digite o novo nome: ");
-                if(nomeTexto.length > 4) {
-                    nomeValido = true;
-                } else {
-                    console.log("Nome inválido, digite novamente.");
-                }            
-            }
-
-            let nacionalidadeValida = false;
-            let nacionalidadeTexto;        
-            while (nacionalidadeValida !== true) {
-                console.log(`Nacionalidade atual: ${autorBusca.nacionalidade}`);
-                nacionalidadeTexto = await rl.question("Digite a nova nacionalidade: ");
-                if(nacionalidadeTexto.length > 4) {
-                    nacionalidadeValida = true;
-                } else {
-                    console.log("Nacionalidade inválida, digite novamente.");
-                }            
-            }
-
-            let dataNascValida = false;
-            let dataNascTexto;   
-            let data_nasc;     
-            while (dataNascValida !== true) {
-                console.log(`Data de Nascimento atual: ${autorBusca.data_nasc.toLocaleDateString("pt-BR")}`);
-                dataNascTexto = await rl.question("Digite a nova data de nascimento (DD/MM/AAAA): ");
+                const autorAtualizado: Autor = {  
+                    id: Number(autorBusca.id),
+                    nome: nomeTexto!,
+                    nacionalidade:nacionalidadeTexto!,
+                    data_nasc: data_nasc!
+                };
                 
-                const regex = /^\d{2}\/\d{2}\/\d{4}$/;
-
-                if (!regex.test(dataNascTexto)) {
-                    console.log("Formato inválido. Use DD/MM/AAAA.");
-                    continue;
+                try {
+                    await this.autorService.alterar(autorAtualizado);
+                    console.log("Autor atualizado com sucesso!");
+                } catch (error) {
+                    console.log(error);            
                 }
-
-                const [dia, mes, ano] = dataNascTexto.split("/").map(Number);
-
-                data_nasc = new Date(ano!, mes! - 1, dia);
-
-                if (
-                    data_nasc.getFullYear() !== ano ||
-                    data_nasc.getMonth() !== mes! - 1 ||
-                    data_nasc.getDate() !== dia
-                ) {
-                    console.log("Data inválida.");
-                    continue;
-                }
-
-                dataNascValida = true;            
-            }                
-    
-            const autorAtualizado: Autor = {  
-                id: Number(autorBusca.id),
-                nome: nomeTexto!,
-                nacionalidade:nacionalidadeTexto!,
-                data_nasc: data_nasc!
-            };
+            }        
             
-            try {
-                await this.autorService.alterar(autorAtualizado);
-                console.log("Autor atualizado com sucesso!");
-            } catch (error) {
-                console.log(error);            
-            }
-
         } catch (error) {
             console.log(error instanceof Error ? error.message : "Erro desconhecido.");
         }

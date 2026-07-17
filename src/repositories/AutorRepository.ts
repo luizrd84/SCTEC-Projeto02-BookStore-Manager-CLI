@@ -94,5 +94,18 @@ export class AutorRepository {
         return result.rows;
     }
 
+    async verificaSeNomeJaExiste(nome: string): Promise<Autor | null> {
+
+        const sql = `
+            SELECT *
+            FROM tb_autor
+            WHERE LOWER(nome) = LOWER($1)            
+        `;
+
+        const result = await pool.query<Autor>(sql, [`%${nome}%`]);
+
+        return result.rows[0] ?? null;
+    }
+
 }
 
