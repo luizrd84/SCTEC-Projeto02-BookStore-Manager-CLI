@@ -102,7 +102,7 @@ export class AutorRepository {
             WHERE LOWER(nome) = LOWER($1)            
         `;
 
-        const result = await pool.query<Autor>(sql, [`%${nome}%`]);
+        const result = await pool.query<Autor>(sql, [nome]);
 
         return result.rows[0] ?? null;
     }

@@ -2,6 +2,7 @@ import { rl } from "../utils/ConsoleUtils";
 import AutorService from "../services/AutorService";
 import { Autor } from "../models/Autor";
 import { aguardarEnter } from "../utils/ConsoleUtils";
+import { resolve } from "dns";
 
 class AutorController { 
 
@@ -302,8 +303,10 @@ class AutorController {
                 };
                 
                 try {
-                    await this.autorService.alterar(autorAtualizado);
-                    console.log("Autor atualizado com sucesso!");
+                    const result = await this.autorService.alterar(autorAtualizado);
+                    if (result !== null) {
+                        console.log("Autor atualizado com sucesso!");
+                    }                    
                 } catch (error) {
                     console.log(error);            
                 }
@@ -328,9 +331,11 @@ class AutorController {
         }
 
         try {
-            await this.autorService.excluir(id);
+            const result = await this.autorService.excluir(id);
 
-            console.log("Autor excluído com sucesso.");
+            if(result !== null) {
+                console.log("Autor excluído com sucesso.");
+            }            
         } catch (error) {
             console.log(error instanceof Error ? error.message : "Erro desconhecido.");
         }
