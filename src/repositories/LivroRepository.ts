@@ -96,6 +96,19 @@ export class LivroRepository {
         return result.rows;
     }
 
+    async verificaSeTituloJaExiste(titulo: string): Promise<Livro | null> {
+
+        const sql = `
+            SELECT *
+            FROM tb_livro
+            WHERE LOWER(titulo) = LOWER($1)            
+        `;
+
+        const result = await pool.query<Livro>(sql, [titulo]);
+
+        return result.rows[0] ?? null;
+    }
+
     
     async livrosDisponiveisParaEmprestimo(): Promise<LivroDisponivelDTO[]> {
 

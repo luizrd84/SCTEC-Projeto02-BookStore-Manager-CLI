@@ -95,6 +95,19 @@ export class ClienteRepository {
         return result.rows;
     }
 
+    async verificaSeNomeJaExiste(nome: string): Promise<Cliente | null> {
+    
+        const sql = `
+            SELECT *
+            FROM tb_cliente
+            WHERE LOWER(nome) = LOWER($1)            
+        `;
+
+        const result = await pool.query<Cliente>(sql, [nome]);
+
+        return result.rows[0] ?? null;
+    }
+
 
     
 }

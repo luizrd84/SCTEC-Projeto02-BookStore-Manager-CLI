@@ -47,12 +47,6 @@ class LivroController {
                 case "5":
                     await this.buscar();
                     break;
-                // case "6": 
-                //     await this.livrosDisponiveisParaEmprestimo();
-                //     break;
-                // case "7":
-                //     await this.buscarDisponibilidadePorId();
-                //     break;
                 case "6":
                     return;
                 default: 
@@ -135,8 +129,10 @@ class LivroController {
         };
         
         try {
-            await this.livroService.cadastrar(livro);
-            console.log("Livro cadastrado com sucesso!");
+            const result =await this.livroService.cadastrar(livro);
+            if(result !== null) {
+                console.log("Livro cadastrado com sucesso!");
+            }
         } catch (error) {
             console.log(error);            
         }
@@ -192,10 +188,14 @@ class LivroController {
             try {
                 const busca = await this.livroService.buscarPorId(id);
 
-                console.clear();
-                console.log("Dados do livro pesquisado:");
-                console.log(`ID: ${busca.id}, Título: ${busca.titulo}, Ano publicação: ${busca.ano_publicacao}, Quantidade: ${busca.quantidade}, ID do autor: ${busca.autor_id}`);          
-
+                if(busca === null)  {
+                    console.log("Livro não encontrado.")
+                } else {
+                    console.clear();
+                    console.log("Dados do livro pesquisado:");
+                    console.log(`ID: ${busca.id}, Título: ${busca.titulo}, Ano publicação: ${busca.ano_publicacao}, Quantidade: ${busca.quantidade}, ID do autor: ${busca.autor_id}`);          
+                }
+                
             } catch (error) {
                 console.log(error instanceof Error ? error.message : "Erro desconhecido.");
             }
@@ -254,88 +254,94 @@ class LivroController {
         try {
             const livroBusca = await this.livroService.buscarPorId(id);
         
-            let tituloValido = false;
-            let tituloTexto;        
-            while (tituloValido !== true) {
-                console.log(`Título atual: ${livroBusca.titulo}`);
-                tituloTexto = await rl.question("Digite o novo título: ");
-                if(tituloTexto.length > 3) {
-                    tituloValido = true;
-                } else {
-                    console.log("Título inválido, digite novamente.");
-                }            
-            }
+            if(livroBusca === null) {
+                console.log("Livro não encontrado.");
+            } else {
+                let tituloValido = false;
+                let tituloTexto;        
+                while (tituloValido !== true) {
+                    console.log(`Título atual: ${livroBusca.titulo}`);
+                    tituloTexto = await rl.question("Digite o novo título: ");
+                    if(tituloTexto.length > 3) {
+                        tituloValido = true;
+                    } else {
+                        console.log("Título inválido, digite novamente.");
+                    }            
+                }
 
-            let anoPublicacaoValido = false;
-            let anoPublicacaoTexto = "0";        
-            while (anoPublicacaoValido !== true) {
-                console.log(`Ano publicação atual: ${livroBusca.ano_publicacao}`);
-                anoPublicacaoTexto = await rl.question("Digite o novo ano de publicação do livro: ");
+                let anoPublicacaoValido = false;
+                let anoPublicacaoTexto = "0";        
+                while (anoPublicacaoValido !== true) {
+                    console.log(`Ano publicação atual: ${livroBusca.ano_publicacao}`);
+                    anoPublicacaoTexto = await rl.question("Digite o novo ano de publicação do livro: ");
+                    
+                    const anoNumero = Number(anoPublicacaoTexto);
+
+                    if (isNaN(anoNumero)) {
+                        console.log("Valor digitado inválido.");
+                        continue;
+                    }
+
+                    if(anoNumero > 9999 || anoNumero < -9999) {
+                        console.log("Valor digitado inválido.");
+                        continue;
+                    }
+
+                    anoPublicacaoValido = true;    
+                }
+
+                let quantidadeValida = false;
+                let quantidadeTexto = "0";        
+                while (quantidadeValida !== true) {
+                    console.log(`Quantidade atual: ${livroBusca.quantidade}`);
+                    quantidadeTexto = await rl.question("Digite a nova quantidade do livro disponível: ");
+                    
+                    const quantidadeNumero = Number(quantidadeTexto);
+
+                    if (isNaN(quantidadeNumero)) {
+                        console.log("Quantidade digitada inválido.");
+                        continue;
+                    }
+                    if(quantidadeNumero > 999 || quantidadeNumero < 0) {
+                        console.log("Quantidade digitada inválido.");
+                        continue;
+                    }
+
+                    quantidadeValida = true;    
+                }
+
+                let autorIdValido = false;
+                let autorIdTexto = "0";        
+                while (autorIdValido !== true) {
+                    console.log(`ID do autor atual: ${livroBusca.autor_id}`);
+                    autorIdTexto = await rl.question("Digite o novo ID do autor: ");
+                    
+                    const autorIdNumero = Number(autorIdTexto);
+
+                    if (isNaN(autorIdNumero)) {
+                        console.log("ID do autor digitado inválido.");
+                        continue;
+                    }
+                    autorIdValido = true;    
+                }               
+        
+                const livroAtualizado: Livro = {  
+                    id: Number(livroBusca.id),
+                    titulo: tituloTexto!,
+                    ano_publicacao: Number(anoPublicacaoTexto),
+                    quantidade: Number(quantidadeTexto),
+                    autor_id: Number(autorIdTexto)                
+                };
                 
-                const anoNumero = Number(anoPublicacaoTexto);
-
-                if (isNaN(anoNumero)) {
-                    console.log("Valor digitado inválido.");
-                    continue;
+                try {
+                    const result = await this.livroService.alterar(livroAtualizado);
+                    if (result !== null) {
+                        console.log("Livro atualizado com sucesso!");
+                    }
+                } catch (error) {
+                    console.log(error);            
                 }
-
-                if(anoNumero > 9999 || anoNumero < -9999) {
-                    console.log("Valor digitado inválido.");
-                    continue;
-                }
-
-                anoPublicacaoValido = true;    
-            }
-
-            let quantidadeValida = false;
-            let quantidadeTexto = "0";        
-            while (quantidadeValida !== true) {
-                console.log(`Quantidade atual: ${livroBusca.quantidade}`);
-                quantidadeTexto = await rl.question("Digite a nova quantidade do livro disponível: ");
-                
-                const quantidadeNumero = Number(quantidadeTexto);
-
-                if (isNaN(quantidadeNumero)) {
-                    console.log("Quantidade digitada inválido.");
-                    continue;
-                }
-                if(quantidadeNumero > 999 || quantidadeNumero < 0) {
-                    console.log("Quantidade digitada inválido.");
-                    continue;
-                }
-
-                quantidadeValida = true;    
-            }
-
-            let autorIdValido = false;
-            let autorIdTexto = "0";        
-            while (autorIdValido !== true) {
-                console.log(`ID do autor atual: ${livroBusca.autor_id}`);
-                autorIdTexto = await rl.question("Digite o novo ID do autor: ");
-                
-                const autorIdNumero = Number(autorIdTexto);
-
-                if (isNaN(autorIdNumero)) {
-                    console.log("ID do autor digitado inválido.");
-                    continue;
-                }
-                autorIdValido = true;    
-            }               
-    
-            const livroAtualizado: Livro = {  
-                id: Number(livroBusca.id),
-                titulo: tituloTexto!,
-                ano_publicacao: Number(anoPublicacaoTexto),
-                quantidade: Number(quantidadeTexto),
-                autor_id: Number(autorIdTexto)                
-            };
-            
-            try {
-                await this.livroService.alterar(livroAtualizado);
-                console.log("Livro atualizado com sucesso!");
-            } catch (error) {
-                console.log(error);            
-            }
+            }            
 
         } catch (error) {
             console.log(error instanceof Error ? error.message : "Erro desconhecido.");
@@ -356,9 +362,11 @@ class LivroController {
         }
 
         try {
-            await this.livroService.excluir(id);
+            const result = await this.livroService.excluir(id);
 
-            console.log("Livro excluído com sucesso.");
+            if(result !== null) {
+                console.log("Livro excluído com sucesso.");
+            }             
         } catch (error) {
             console.log(error instanceof Error ? error.message : "Erro desconhecido.");
         }
@@ -385,15 +393,12 @@ class LivroController {
                 console.log(`Autor: ${livro.autor}, Título: ${livro.titulo}, Ano publicação: ${livro.ano_publicacao}, Quantidade disponível: ${livro.disponiveis} de ${livro.quantidade}`);                              
             });
 
-
         } catch (error) {
             console.log(error instanceof Error ? error.message : "Erro desconhecido.");            
         }
 
         await aguardarEnter();
     }
-
-
     
 
     async livrosDisponiveisParaEmprestimo() {

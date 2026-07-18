@@ -69,6 +69,7 @@ class AutorService {
 
         if(idExiste === null) {
             console.log("Não foi encontrado nenhum autor com esse ID.");
+            return;
         }
 
         await this.autorRepository.excluir(id);

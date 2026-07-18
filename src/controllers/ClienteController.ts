@@ -96,8 +96,10 @@ class ClienteController {
         };
         
         try {
-            await this.clienteService.cadastrar(cliente);
-            console.log("Cliente cadastrado com sucesso!");
+            const result = await this.clienteService.cadastrar(cliente);
+            if (result !== null) {
+                console.log("Cliente cadastrado com sucesso!");
+            }
         } catch (error) {
             console.log(error);            
         }
@@ -309,8 +311,10 @@ class ClienteController {
 
                 
                 try {
-                    await this.clienteService.alterar(clienteAtualizado);
-                    console.log("Cliente atualizado com sucesso!");
+                    const result = await this.clienteService.alterar(clienteAtualizado);
+                    if (result !== null) {
+                        console.log("Cliente atualizado com sucesso!");
+                    }
                 } catch (error) {
                     console.log(error);            
                 }
@@ -336,9 +340,11 @@ class ClienteController {
         }
 
         try {
-            await this.clienteService.excluir(id);
+            const result = await this.clienteService.excluir(id);
 
-            console.log("Cliente excluído com sucesso.");
+            if (result !== null) {
+                console.log("Cliente excluído com sucesso.");
+            }
         } catch (error) {
             console.log(error instanceof Error ? error.message : "Erro desconhecido.");
         }
