@@ -61,7 +61,7 @@ class LivroController {
         let tituloTexto;        
         while (tituloValido !== true) {
             tituloTexto = await rl.question("Digite o título do livro: ");
-            if(tituloTexto.length > 4) {
+            if(tituloTexto.length >= 4) {
                 tituloValido = true;
             } else {
                 console.log("Título inválido, digite novamente.");

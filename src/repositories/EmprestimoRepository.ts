@@ -25,7 +25,7 @@ export class EmprestimoRepository {
         return emprestimoSalvo;
     }
 
-    async adicionarLivro(emprestimoId: number, livroId: number): Promise<void> {
+    async adicionarLivro(emprestimoId: number, livroId: number): Promise<EmprestimoLivro> {
         const sql = `
             INSERT INTO tb_emprestimo_livro (
                 emprestimo_id,
@@ -36,9 +36,13 @@ export class EmprestimoRepository {
 
         const result = await pool.query(sql, [emprestimoId, livroId]);
 
+        const emprestimoLivroSalvo = result.rows[0];
+
         if (result.rowCount !== 1) {
             throw new Error("Erro ao adicionar livro ao empréstimo.");
         }
+
+        return emprestimoLivroSalvo;
     }
     
 

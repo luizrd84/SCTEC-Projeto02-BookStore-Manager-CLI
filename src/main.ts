@@ -29,7 +29,7 @@ async function main() {
     const clienteController = new ClienteController(clienteService);
 
     const emprestimoRepository = new EmprestimoRepository();
-    const emprestimoService = new EmprestimoService(emprestimoRepository);
+    const emprestimoService = new EmprestimoService(emprestimoRepository, livroRepository);
     const emprestimoController = new EmprestimoController(emprestimoService, clienteService, livroService);
 
     const terminal = new TerminalController(

@@ -150,6 +150,12 @@ class EmprestimoController {
         try {
             const emprestimoCadastrado = await this.emprestimoService.cadastrar(emprestimo);            
             
+            if(emprestimoCadastrado === null) {
+                console.log("Não foi possível cadastrar o empréstimo.");    
+                await aguardarEnter();
+                return;
+            }
+
             let livroIdValido = false;
             let livroIdTexto = "0";        
             while (livroIdValido !== true) {
@@ -163,7 +169,11 @@ class EmprestimoController {
                 }
 
                 try {
-                    await this.livroService.buscarPorId(livroIdNumero);                
+                    const livroExiste = await this.livroService.buscarPorId(livroIdNumero);                
+                    if(livroExiste === null) {
+                        console.log("Livro não encontrado");
+                        continue;
+                    }
                     livroIdValido = true;   
                 } catch (error) {
                     console.log(error);            
@@ -171,8 +181,14 @@ class EmprestimoController {
             }
      
             try {
-                await this.emprestimoService.adicionarLivro(emprestimoCadastrado.id!, Number(livroIdTexto));
-                console.log("Empréstimo cadastrado com sucesso!");
+                console.log("teste" + emprestimoCadastrado.id! + " " + Number(livroIdTexto));
+                const livroAdicionado = await this.emprestimoService.adicionarLivro(emprestimoCadastrado.id!, Number(livroIdTexto));
+
+                if(livroAdicionado === null) {
+                    console.log("Não foi possível adicionar o livro ao empréstimo.");
+                } else {
+                    console.log("Empréstimo cadastrado com sucesso!");
+                }                
             } catch (error) {
                 console.log(error);            
             }
@@ -274,8 +290,12 @@ class EmprestimoController {
         }
 
         try {
-            await this.emprestimoService.devolver(emprestimoComDevolucao);
-            console.log("Livros emprestados devolvidos com sucesso!");
+            const result =await this.emprestimoService.devolver(emprestimoComDevolucao);
+
+            if(result !== null) {
+                console.log("Livros emprestados devolvidos com sucesso!");
+            }
+           
         } catch (error) {
             console.log(error);                 
         }

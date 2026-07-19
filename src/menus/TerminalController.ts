@@ -84,25 +84,6 @@ class TerminalController {
                 10 - Voltar
             Escolha: `);
 
-            /*
-            1 - Listar Livros disponíveis - fazer OK - é o 1
-            2 - Listar Livros emprestados (Não devolvidos) - fazer - ok  é o 
-            3 - Listar Livros emprestados (Devolvidos) - fazer - ok finalizados
-           falta 4 - Listar Livros por ID do Autor
-            5 - Listar Empréstimos por ID do Livro + quantidade
-            6 - Listar Clientes com empréstimos ativos
-            os que já fiz:
-            6 - Livros disponíveis para empréstimo -> mesmo que o 1 acima ou esse mostra todos da biblioteca? - o outro é o listar normal
-            7 - Consulta disponibilidade por ID ???? do livro deve ser, confirmar
-            5 - Listar Empréstimos por ID do Cliente
-            6 - Listar Empréstimos por ID do Livro
-            7 - Listar Empréstimos em aberto
-            8 - Listar Empréstimos atrasados
-            3 - Deletar Autor
-            4 - Listar Autores
-            5 - Buscar Autor
-            */
-
             switch(opcao){
 
                     
